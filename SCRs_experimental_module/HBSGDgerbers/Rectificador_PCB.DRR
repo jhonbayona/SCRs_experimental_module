@@ -1,0 +1,22 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: Rectificador_PCB.PcbDoc   20/09/2023  7:01:44 p. m.
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Rectificador_PCB.TXT
+EIA File   : Rectificador_PCB.DRL
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      28mil (0.701mm)                                           Round             8         PTH        3.64inch (92.42mm)
+T2      32mil (0.8mm)                                             Round             6         PTH        2.42inch (61.49mm)
+T3      35mil (0.899mm)                                           Round             28        PTH        8.56inch (217.45mm)
+T4      39mil (1.001mm)                                           Round             8         PTH        4.84inch (123.01mm)
+T5      47mil (1.199mm)                                           Round             8         PTH        4.52inch (114.83mm)
+T6      59mil (1.501mm)                                           Round             10        PTH        4.78inch (121.48mm)
+T7      63mil (1.6mm)                                             Round             6         PTH        2.04inch (51.71mm)
+T8      197mil (5.001mm)                                          Round             4         PTH        9.23inch (234.43mm)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              78
+
+Total Processing Time (hh:mm:ss) : 00:00:00

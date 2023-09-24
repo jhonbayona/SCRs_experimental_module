@@ -1,0 +1,26 @@
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of Project [Rectificador_Project.PrjPcb]
+   Generated File[Rectificador_PCB.GTO]
+   Generated File[Rectificador_PCB.GTP]
+   Generated File[Rectificador_PCB.GTS]
+   Generated File[Rectificador_PCB.GTL]
+   Generated File[Rectificador_PCB.GBL]
+   Generated File[Rectificador_PCB.GBS]
+   Generated File[Rectificador_PCB.GBP]
+   Generated File[Rectificador_PCB.GBO]
+   Generated File[Rectificador_PCB.GM1]
+   Generated File[Rectificador_PCB.GM13]
+   Generated File[Rectificador_PCB.GM15]
+   Generated File[Rectificador_PCB.GKO]
+   Generated File[Rectificador_PCB.GML]
+   Generated File[Rectificador_PCB.1]
+   Generated File[Rectificador_PCB.RUL]
+   Generated File[Rectificador_PCB.EXTREP]
+   Generated File[Rectificador_PCB.REP]
+
+
+Files Generated   : 17
+Documents Printed : 0
+
+Finished Output Generation At 7:02:38 p. m. On 20/09/2023

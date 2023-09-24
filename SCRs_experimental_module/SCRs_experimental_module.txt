@@ -1,0 +1,249 @@
+#include "PeripheralHeaderIncludes.h"
+#include "F2806x_EPwm_defines.h"        
+#include "F2806x_Cla.h" 
+#include "math.h"
+void DeviceInit(void);
+void InitCpuTimers();
+void InitFlash();
+void MemCopy(Uint16 *SourceAddr, Uint16* SourceEndAddr, Uint16* DestAddr);
+interrupt void adc_isr(void);
+extern Uint16 RamfuncsLoadStart, RamfuncsLoadEnd, RamfuncsRunStart;
+float32 p1=0;
+void main(void)
+{
+Uint16 n = 0;
+DeviceInit();   
+#ifdef FLASH
+MemCopy(&RamfuncsLoadStart, &RamfuncsLoadEnd, &RamfuncsRunStart);
+InitFlash();   
+#endif 
+EALLOW;
+AdcRegs.ADCCTL2.bit.ADCNONOVERLAP=1;	
+AdcRegs.ADCCTL1.bit.INTPULSEPOS=1;	
+AdcRegs.INTSEL1N2.bit.INT1E=1;	 
+AdcRegs.INTSEL1N2.bit.INT1CONT=0;	 
+AdcRegs.INTSEL1N2.bit.INT1SEL=1;   
+AdcRegs.ADCCTL1.bit.ADCBGPWD=1;   
+AdcRegs.ADCCTL1.bit.ADCREFSEL=0;   
+AdcRegs.ADCCTL1.bit.ADCREFPWD=1;   
+AdcRegs.ADCCTL1.bit.ADCPWDN=1;   
+AdcRegs.ADCCTL1.bit.ADCENABLE=1;   
+AdcRegs.ADCCTL1.bit.VREFLOCONV=0;
+for(n=0; n<4445; n++)
+{
+}               
+AdcRegs.ADCCTL1.bit.INTPULSEPOS=1;   
+AdcRegs.ADCSAMPLEMODE.bit.SIMULEN0=1; 
+AdcRegs.ADCSOC0CTL.bit.CHSEL=0;   
+AdcRegs.ADCSOC0CTL.bit.TRIGSEL=4;   
+AdcRegs.ADCSOC0CTL.bit.ACQPS=6;   
+//
+Comp1Regs.DACVAL.all=512;
+Comp1Regs.COMPCTL.bit.COMPDACEN=1;
+Comp1Regs.COMPCTL.bit.SYNCSEL=1;
+Comp2Regs.DACVAL.all=512;
+Comp2Regs.COMPCTL.bit.COMPDACEN=1;
+Comp2Regs.COMPCTL.bit.SYNCSEL=1;
+Comp3Regs.DACVAL.all=512;
+Comp3Regs.COMPCTL.bit.COMPDACEN=1;
+Comp3Regs.COMPCTL.bit.SYNCSEL=1;
+//
+//
+EDIS;
+EPwm1Regs.ETSEL.bit.SOCAEN=1;      
+EPwm1Regs.ETSEL.bit.SOCASEL=1;      
+EPwm1Regs.ETPS.bit.SOCAPRD=1;      
+EPwm1Regs.TBPRD=42000; 
+EPwm1Regs.TBCTL.bit.CTRMODE=TB_COUNT_UP;      
+EPwm1Regs.TBCTL.bit.PRDLD=TB_SHADOW;//TB_IMMEDIATE;   
+EPwm1Regs.TBCTL.bit.PHSDIR=0;
+EPwm1Regs.TBCTL.bit.PHSEN=TB_ENABLE;       
+EPwm1Regs.TBCTL.bit.SYNCOSEL=TB_SYNC_DISABLE;
+EPwm1Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1;
+EPwm1Regs.TBCTL.bit.CLKDIV=5;
+EPwm1Regs.TBPHS.half.TBPHS=0;             
+EPwm1Regs.CMPCTL.bit.SHDWAMODE=CC_SHADOW; 
+EPwm1Regs.CMPCTL.bit.SHDWBMODE=CC_SHADOW;
+EPwm1Regs.CMPCTL.bit.LOADAMODE=CC_CTR_ZERO; 
+EPwm1Regs.CMPCTL.bit.LOADBMODE=CC_CTR_ZERO;
+EPwm1Regs.AQCTLA.bit.CAU=AQ_SET;        
+EPwm1Regs.AQCTLA.bit.CBU=AQ_CLEAR;        
+EALLOW;
+EPwm1Regs.TZDCSEL.bit.DCAEVT1=2;
+EPwm1Regs.DCTRIPSEL.bit.DCAHCOMPSEL=8;
+EPwm1Regs.DCACTL.bit.EVT1SYNCE=1;
+EDIS;
+//
+EPwm2Regs.ETSEL.bit.SOCAEN=1;      
+EPwm2Regs.ETSEL.bit.SOCASEL=1;      
+EPwm2Regs.ETPS.bit.SOCAPRD=1;      
+EPwm2Regs.TBPRD=42000; 
+EPwm2Regs.TBCTL.bit.CTRMODE=TB_COUNT_UP;      
+EPwm2Regs.TBCTL.bit.PRDLD=TB_SHADOW;//TB_IMMEDIATE;   
+EPwm2Regs.TBCTL.bit.PHSDIR=0;
+EPwm2Regs.TBCTL.bit.PHSEN=TB_ENABLE;       
+EPwm2Regs.TBCTL.bit.SYNCOSEL=TB_SYNC_DISABLE;
+EPwm2Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1;
+EPwm2Regs.TBCTL.bit.CLKDIV=5;
+EPwm2Regs.TBPHS.half.TBPHS=0;             
+EPwm2Regs.CMPCTL.bit.SHDWAMODE=CC_SHADOW;
+EPwm2Regs.CMPCTL.bit.SHDWBMODE=CC_SHADOW;
+EPwm2Regs.CMPCTL.bit.LOADAMODE=CC_CTR_ZERO;
+EPwm2Regs.CMPCTL.bit.LOADBMODE=CC_CTR_ZERO;
+EPwm2Regs.AQCTLA.bit.CAU=AQ_SET;        
+EPwm2Regs.AQCTLA.bit.CBU=AQ_CLEAR;        
+EALLOW;
+EPwm2Regs.TZDCSEL.bit.DCAEVT1=2;
+EPwm2Regs.DCTRIPSEL.bit.DCAHCOMPSEL=2;
+EPwm2Regs.DCACTL.bit.EVT1SYNCE=1;
+EDIS;
+//
+EPwm3Regs.ETSEL.bit.SOCAEN=1;   
+EPwm3Regs.ETSEL.bit.SOCASEL=1;      
+EPwm3Regs.ETPS.bit.SOCAPRD=1;      
+EPwm3Regs.TBPRD=42000; 
+EPwm3Regs.TBCTL.bit.CTRMODE=TB_COUNT_UP;      
+EPwm3Regs.TBCTL.bit.PRDLD=TB_SHADOW;
+EPwm3Regs.TBCTL.bit.PHSDIR=0;
+EPwm3Regs.TBCTL.bit.PHSEN=TB_ENABLE;       
+EPwm3Regs.TBCTL.bit.SYNCOSEL=TB_SYNC_DISABLE;
+EPwm3Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1;
+EPwm3Regs.TBCTL.bit.CLKDIV=5;
+EPwm3Regs.TBPHS.half.TBPHS=0;             
+EPwm3Regs.CMPCTL.bit.SHDWAMODE=CC_SHADOW;
+EPwm3Regs.CMPCTL.bit.SHDWBMODE=CC_SHADOW;
+EPwm3Regs.CMPCTL.bit.LOADAMODE=CC_CTR_ZERO;
+EPwm3Regs.CMPCTL.bit.LOADBMODE=CC_CTR_ZERO;
+EPwm3Regs.AQCTLA.bit.CAU=AQ_SET;        
+EPwm3Regs.AQCTLA.bit.CBU=AQ_CLEAR;        
+EALLOW;
+EPwm3Regs.TZDCSEL.bit.DCAEVT1=2;
+EPwm3Regs.DCTRIPSEL.bit.DCAHCOMPSEL=9;
+EPwm3Regs.DCACTL.bit.EVT1SYNCE=1;
+EDIS;
+//
+EPwm4Regs.ETSEL.bit.SOCAEN=1;      
+EPwm4Regs.ETSEL.bit.SOCASEL=1;      
+EPwm4Regs.ETPS.bit.SOCAPRD=1;      
+EPwm4Regs.TBPRD=42000; 
+EPwm4Regs.TBCTL.bit.CTRMODE=TB_COUNT_UP;      
+EPwm4Regs.TBCTL.bit.PRDLD=TB_SHADOW; 
+EPwm4Regs.TBCTL.bit.PHSDIR=0;
+EPwm4Regs.TBCTL.bit.PHSEN=TB_ENABLE;       
+EPwm4Regs.TBCTL.bit.SYNCOSEL=TB_SYNC_DISABLE;
+EPwm4Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1;
+EPwm4Regs.TBCTL.bit.CLKDIV=5;
+EPwm4Regs.TBPHS.half.TBPHS=0;             
+EPwm4Regs.CMPCTL.bit.SHDWAMODE=CC_SHADOW;
+EPwm4Regs.CMPCTL.bit.SHDWBMODE=CC_SHADOW;
+EPwm4Regs.CMPCTL.bit.LOADAMODE=CC_CTR_ZERO;
+EPwm4Regs.CMPCTL.bit.LOADBMODE=CC_CTR_ZERO;
+EPwm4Regs.AQCTLA.bit.CAU=AQ_SET;        
+EPwm4Regs.AQCTLA.bit.CBU=AQ_CLEAR;        
+EALLOW;
+EPwm4Regs.TZDCSEL.bit.DCAEVT1=2;
+EPwm4Regs.DCTRIPSEL.bit.DCAHCOMPSEL=0;
+EPwm4Regs.DCACTL.bit.EVT1SYNCE=1;
+EDIS;
+//
+EPwm5Regs.ETSEL.bit.SOCAEN=1;      
+EPwm5Regs.ETSEL.bit.SOCASEL=1;      
+EPwm5Regs.ETPS.bit.SOCAPRD=1;      
+EPwm5Regs.TBPRD=42000; 
+EPwm5Regs.TBCTL.bit.CTRMODE=TB_COUNT_UP;      
+EPwm5Regs.TBCTL.bit.PRDLD=TB_SHADOW;
+EPwm5Regs.TBCTL.bit.PHSDIR=0;
+EPwm5Regs.TBCTL.bit.PHSEN=TB_ENABLE;       
+EPwm5Regs.TBCTL.bit.SYNCOSEL=TB_SYNC_DISABLE;
+EPwm5Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1;
+EPwm5Regs.TBCTL.bit.CLKDIV=5;
+EPwm5Regs.TBPHS.half.TBPHS=0;             
+EPwm5Regs.CMPCTL.bit.SHDWAMODE=CC_SHADOW;
+EPwm5Regs.CMPCTL.bit.SHDWBMODE=CC_SHADOW;
+EPwm5Regs.CMPCTL.bit.LOADAMODE=CC_CTR_ZERO;
+EPwm5Regs.CMPCTL.bit.LOADBMODE=CC_CTR_ZERO;
+EPwm5Regs.AQCTLA.bit.CAU=AQ_SET;        
+EPwm5Regs.AQCTLA.bit.CBU=AQ_CLEAR;        
+EALLOW;
+EPwm5Regs.TZDCSEL.bit.DCAEVT1=2;
+EPwm5Regs.DCTRIPSEL.bit.DCAHCOMPSEL=10;
+EPwm5Regs.DCACTL.bit.EVT1SYNCE=1;
+EDIS;
+//
+EPwm6Regs.ETSEL.bit.SOCAEN=1;      
+EPwm6Regs.ETSEL.bit.SOCASEL=1;      
+EPwm6Regs.ETPS.bit.SOCAPRD=1;      
+EPwm6Regs.TBPRD=42000; 
+EPwm6Regs.TBCTL.bit.CTRMODE=TB_COUNT_UP;      
+EPwm6Regs.TBCTL.bit.PRDLD=TB_SHADOW;
+EPwm6Regs.TBCTL.bit.PHSDIR=0;
+EPwm6Regs.TBCTL.bit.PHSEN=TB_ENABLE;       
+EPwm6Regs.TBCTL.bit.SYNCOSEL=TB_SYNC_DISABLE;
+EPwm6Regs.TBCTL.bit.HSPCLKDIV=TB_DIV1;
+EPwm6Regs.TBCTL.bit.CLKDIV=5;
+EPwm6Regs.TBPHS.half.TBPHS=0;             
+EPwm6Regs.CMPCTL.bit.SHDWAMODE=CC_SHADOW;
+EPwm6Regs.CMPCTL.bit.SHDWBMODE=CC_SHADOW;
+EPwm6Regs.CMPCTL.bit.LOADAMODE=CC_CTR_ZERO;
+EPwm6Regs.CMPCTL.bit.LOADBMODE=CC_CTR_ZERO;
+EPwm6Regs.AQCTLA.bit.CAU=AQ_SET;        
+EPwm6Regs.AQCTLA.bit.CBU=AQ_CLEAR;     
+EALLOW;
+EPwm6Regs.TZDCSEL.bit.DCAEVT1=2;
+EPwm6Regs.DCTRIPSEL.bit.DCAHCOMPSEL=1;
+EPwm6Regs.DCACTL.bit.EVT1SYNCE=1;
+EDIS;
+//
+EPwm1Regs.CMPB=20000;
+EPwm2Regs.CMPB=20000;
+EPwm3Regs.CMPB=20000;
+EPwm4Regs.CMPB=20000;
+EPwm5Regs.CMPB=20000;
+EPwm6Regs.CMPB=20000;
+CpuTimer0Regs.PRD.all = 25000000;
+IER=0x0000;
+IFR=0x0000;
+EALLOW;  
+PieVectTable.ADCINT1=&adc_isr; 
+EDIS;    
+PieCtrlRegs.PIEIER1.bit.INTx1 = 1;   
+IER |= M_INT1;                   
+EINT;                            
+ERTM;
+for(;;)  
+		{
+			if(CpuTimer0Regs.TCR.bit.TIF == 1)
+			{
+				CpuTimer0Regs.TCR.bit.TIF = 1;	
+				GpioDataRegs.GPBTOGGLE.bit.GPIO34 = 1;	
+			}
+
+		}
+}         
+interrupt void adc_isr(void)
+{
+p1=(5*(float32)AdcResult.ADCRESULT0);
+if (p1<0)
+		{
+	p1=0;
+		}
+else
+	{
+	if (p1>20000)
+		{
+		p1=20000;
+		}
+	else
+		{
+		p1=p1;
+		}
+	}
+EPwm1Regs.CMPA.half.CMPA=p1;
+EPwm2Regs.CMPA.half.CMPA=p1;
+EPwm3Regs.CMPA.half.CMPA=p1;
+EPwm4Regs.CMPA.half.CMPA=p1;
+EPwm5Regs.CMPA.half.CMPA=p1;
+EPwm6Regs.CMPA.half.CMPA=p1;
+AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;      
+PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+}											
